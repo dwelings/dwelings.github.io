@@ -1,4 +1,4 @@
-<!-- iteration num 0.3 -->
+<!-- iteration num 0.5 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -28,21 +28,26 @@
             height: 500px; /* Adjust as needed */
             overflow: auto;
         }
+        #content-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
     </style>
 </head>
 <body>
     <h1>Simple Proxy</h1>
-    <input type="text" id="url-input" placeholder="Enter URL here">
+    <input type="text" id="url-input" placeholder="Enter URL here, e.g., https://dwelings.github.io" value="https://dwelings.github.io">
     <button id="fetch-button">Fetch</button>
     <div id="response">
-        <iframe id="content-frame" style="width: 100%; height: 100%; border: none;"></iframe>
+        <iframe id="content-frame"></iframe>
     </div>
 
     <script>
         document.getElementById('fetch-button').addEventListener('click', function() {
             const url = document.getElementById('url-input').value;
             if (url) {
-                // Update iframe source directly
+                // Set the iframe source to the entered URL
                 document.getElementById('content-frame').src = url;
             } else {
                 document.getElementById('response').innerText = 'Please enter a URL.';

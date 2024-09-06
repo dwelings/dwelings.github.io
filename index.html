@@ -1,4 +1,4 @@
-<!-- iteration num 1.1 -->
+<!-- iteration num 1.2 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -45,16 +45,14 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('fetch-button').addEventListener('click', function() {
+            document.getElementById('fetch-button').addEventListener('click', () => {
                 const urlInput = document.getElementById('url-input');
                 const url = urlInput.value.trim();
                 if (url) {
-                    // Prepend "https://" if the URL does not start with "http://" or "https://"
                     let fullUrl = url;
                     if (!/^https?:\/\//i.test(fullUrl)) {
                         fullUrl = 'https://' + fullUrl;
                     } else if (/^http:\/\//i.test(fullUrl)) {
-                        // If the URL starts with "http://", switch to "https://"
                         fullUrl = fullUrl.replace(/^http:\/\//i, 'https://');
                     }
 
@@ -62,10 +60,10 @@
                     const proxyUrl = `http://localhost:3000/proxy?url=${encodeURIComponent(fullUrl)}`;
                     const iframe = document.getElementById('content-frame');
                     iframe.src = proxyUrl;
-                    iframe.onload = function() {
+                    iframe.onload = () => {
                         document.getElementById('response').innerText = ''; // Clear any previous error message
                     };
-                    iframe.onerror = function() {
+                    iframe.onerror = () => {
                         document.getElementById('response').innerText = 'Failed to load the page. It may be blocked or restricted.';
                     };
                 } else {
@@ -76,4 +74,3 @@
     </script>
 </body>
 </html>
-

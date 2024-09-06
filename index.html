@@ -1,4 +1,4 @@
-<!-- iteration num 0.5 -->
+<!-- iteration num 0.6 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -37,7 +37,7 @@
 </head>
 <body>
     <h1>Simple Proxy</h1>
-    <input type="text" id="url-input" placeholder="Enter URL here, e.g., https://dwelings.github.io" value="https://dwelings.github.io">
+    <input type="text" id="url-input" placeholder="Enter any URL here">
     <button id="fetch-button">Fetch</button>
     <div id="response">
         <iframe id="content-frame"></iframe>
@@ -47,6 +47,11 @@
         document.getElementById('fetch-button').addEventListener('click', function() {
             const url = document.getElementById('url-input').value;
             if (url) {
+                // Ensure the URL starts with http:// or https://
+                if (!/^https?:\/\//i.test(url)) {
+                    document.getElementById('response').innerText = 'Please enter a valid URL starting with http:// or https://';
+                    return;
+                }
                 // Set the iframe source to the entered URL
                 document.getElementById('content-frame').src = url;
             } else {
@@ -56,3 +61,4 @@
     </script>
 </body>
 </html>
+

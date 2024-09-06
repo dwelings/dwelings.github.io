@@ -25,6 +25,8 @@
             text-align: left;
             max-width: 80%;
             margin: auto;
+            overflow: auto;
+            white-space: pre-wrap;
         }
     </style>
 </head>
@@ -38,16 +40,16 @@
         document.getElementById('fetch-button').addEventListener('click', function() {
             const url = document.getElementById('url-input').value;
             if (url) {
-                fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`)
+                fetch(`https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(url)}`)
                     .then(response => response.json())
                     .then(data => {
-                        document.getElementById('response').innerText = data.contents;
+                        document.getElementById('response').textContent = data.contents;
                     })
                     .catch(error => {
-                        document.getElementById('response').innerText = 'Error: ' + error;
+                        document.getElementById('response').textContent = 'Error: ' + error.message;
                     });
             } else {
-                document.getElementById('response').innerText = 'Please enter a URL.';
+                document.getElementById('response').textContent = 'Please enter a URL.';
             }
         });
     </script>

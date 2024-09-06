@@ -1,4 +1,4 @@
-<!-- iteration num 1.3 -->
+<!-- iteration num 1.5 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -36,15 +36,14 @@
     </style>
 </head>
 <body>
-    <h1>Simple Proxy</h1>
-    <input type="text" id="url-input" placeholder="Enter any URL here, e.g., google.com">
+    <h1>Simple Proxy - Iteration 1.5</h1>
+    <input type="text" id="url-input" placeholder="Enter a URL, e.g., google.com">
     <button id="fetch-button">Fetch</button>
     <div id="response">
         <iframe id="content-frame"></iframe>
     </div>
 
     <script>
-        // Ensure the DOM is fully loaded before running the script
         document.addEventListener('DOMContentLoaded', () => {
             const fetchButton = document.getElementById('fetch-button');
             const iframe = document.getElementById('content-frame');
@@ -58,15 +57,8 @@
                 const urlInput = document.getElementById('url-input');
                 const url = urlInput.value.trim();
                 if (url) {
-                    let fullUrl = url;
-                    if (!/^https?:\/\//i.test(fullUrl)) {
-                        fullUrl = 'https://' + fullUrl;
-                    } else if (/^http:\/\//i.test(fullUrl)) {
-                        fullUrl = fullUrl.replace(/^http:\/\//i, 'https://');
-                    }
-
-                    // Use the server-side proxy to fetch and display content
-                    const proxyUrl = `http://localhost:3000/proxy?url=${encodeURIComponent(fullUrl)}`;
+                    // Directly set the iframe src with the user-provided URL
+                    const proxyUrl = `http://localhost:3000/proxy?url=${encodeURIComponent(url)}`;
                     iframe.src = proxyUrl;
                     iframe.onload = () => {
                         document.getElementById('response').innerText = ''; // Clear any previous error message

@@ -1,10 +1,55 @@
-<div style="width:640px;height:480px;max-width:100%">
-        <div id="game"></div>
-      </div>
-<script type="text/javascript"
-    EJS_player = '#game';
-    EJS_biosUrl = '';
-    EJS_gameUrl = 'dwelings.github.io/games/ps-v.1'; // Url to Game rom
-    EJS_core = 'gba'; // Optional core: vbam, vbanext
-</script>
-<script src="https://www.emulatorjs.com/loader.js"></script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Proxy</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        #url-input {
+            width: 300px;
+            padding: 10px;
+            margin: 10px;
+        }
+        #fetch-button {
+            padding: 10px 20px;
+        }
+        #response {
+            margin-top: 20px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+            max-width: 80%;
+            margin: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Simple Proxy</h1>
+    <input type="text" id="url-input" placeholder="Enter URL here">
+    <button id="fetch-button">Fetch</button>
+    <div id="response"></div>
+
+    <script>
+        document.getElementById('fetch-button').addEventListener('click', function() {
+            const url = document.getElementById('url-input').value;
+            if (url) {
+                fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById('response').innerText = data.contents;
+                    })
+                    .catch(error => {
+                        document.getElementById('response').innerText = 'Error: ' + error;
+                    });
+            } else {
+                document.getElementById('response').innerText = 'Please enter a URL.';
+            }
+        });
+    </script>
+</body>
+</html>

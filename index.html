@@ -1,4 +1,4 @@
-<!-- iteration num 0.8 -->
+<!-- iteration num 0.9 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -49,8 +49,12 @@
             if (url) {
                 // Prepend "http://" if the URL does not start with "http://" or "https://"
                 if (!/^https?:\/\//i.test(url)) {
-                    url = 'http://' + url;
+                    url = 'https://' + url;
+                } else if (/^http:\/\//i.test(url)) {
+                    // If the URL starts with "http://", switch to "https://"
+                    url = url.replace(/^http:\/\//i, 'https://');
                 }
+                
                 // Set the iframe source to the entered URL
                 const iframe = document.getElementById('content-frame');
                 iframe.src = url;

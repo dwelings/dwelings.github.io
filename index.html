@@ -27,6 +27,7 @@
             margin: auto;
             overflow: auto;
             white-space: pre-wrap;
+            word-break: break-word;
         }
     </style>
 </head>
@@ -41,9 +42,9 @@
             const url = document.getElementById('url-input').value;
             if (url) {
                 fetch(`https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(url)}`)
-                    .then(response => response.json())
+                    .then(response => response.text())  // Change to .text() to handle HTML
                     .then(data => {
-                        document.getElementById('response').textContent = data.contents;
+                        document.getElementById('response').textContent = data;
                     })
                     .catch(error => {
                         document.getElementById('response').textContent = 'Error: ' + error.message;

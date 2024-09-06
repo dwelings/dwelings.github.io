@@ -1,4 +1,4 @@
-<!-- iteration num 0.2 -->
+<!-- iteration num 0.3 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,12 +23,10 @@
             margin-top: 20px;
             border: 1px solid #ccc;
             padding: 10px;
-            text-align: left;
             max-width: 80%;
             margin: auto;
+            height: 500px; /* Adjust as needed */
             overflow: auto;
-            white-space: pre-wrap;
-            word-break: break-word;
         }
     </style>
 </head>
@@ -36,22 +34,18 @@
     <h1>Simple Proxy</h1>
     <input type="text" id="url-input" placeholder="Enter URL here">
     <button id="fetch-button">Fetch</button>
-    <div id="response"></div>
+    <div id="response">
+        <iframe id="content-frame" style="width: 100%; height: 100%; border: none;"></iframe>
+    </div>
 
     <script>
         document.getElementById('fetch-button').addEventListener('click', function() {
             const url = document.getElementById('url-input').value;
             if (url) {
-                fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        document.getElementById('response').textContent = data.contents;
-                    })
-                    .catch(error => {
-                        document.getElementById('response').textContent = 'Error: ' + error.message;
-                    });
+                // Update iframe source directly
+                document.getElementById('content-frame').src = url;
             } else {
-                document.getElementById('response').textContent = 'Please enter a URL.';
+                document.getElementById('response').innerText = 'Please enter a URL.';
             }
         });
     </script>

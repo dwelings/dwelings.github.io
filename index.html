@@ -1,4 +1,4 @@
-<!-- iteration num 1.8 -->
+<!-- iteration num 0.20 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,30 +10,46 @@
             font-family: Arial, sans-serif;
             text-align: center;
             padding: 20px;
+            background-color: #f0f0f0; /* Light gray background */
+            color: #333; /* Dark gray text */
         }
         #url-input {
             width: 300px;
             padding: 10px;
             margin: 10px;
+            border: 1px solid #ccc; /* Light gray border */
+            border-radius: 5px; /* Rounded corners */
+            background-color: #fff; /* White background */
         }
         #fetch-button {
             padding: 10px 20px;
+            border: none;
+            border-radius: 5px; /* Rounded corners */
+            background-color: #007bff; /* Blue background */
+            color: #fff; /* White text */
+            cursor: pointer;
+        }
+        #fetch-button:hover {
+            background-color: #0056b3; /* Darker blue on hover */
         }
         #response {
             margin-top: 20px;
-            border: 1px solid #ccc;
+            border: 1px solid #ccc; /* Light gray border */
             padding: 10px;
             max-width: 80%;
             margin: auto;
             height: 500px; /* Adjust as needed */
             overflow: auto;
-            white-space: pre-wrap; /* Preserve whitespace for plain text */
+            background-color: #fff; /* White background for content */
+            color: #333; /* Dark gray text */
+            border-radius: 5px; /* Rounded corners */
             text-align: left; /* Align text to the left for better readability */
+            white-space: pre-wrap; /* Preserve whitespace for plain text */
         }
     </style>
 </head>
 <body>
-    <h1>Simple Proxy - Iteration 1.8</h1>
+    <h1>Simple Proxy - Iteration 0.20</h1>
     <input type="text" id="url-input" placeholder="Enter a URL, e.g., google.com">
     <button id="fetch-button">Fetch</button>
     <div id="response"></div>
@@ -52,8 +68,10 @@
                 const urlInput = document.getElementById('url-input');
                 const url = urlInput.value.trim();
                 if (url) {
-                    const proxyUrl = `http://localhost:3000/proxy?url=${encodeURIComponent(url)}`;
-                    
+                    // Use a public proxy service like CORS Anywhere
+                    const proxyUrl = `https://cors-anywhere.herokuapp.com/${url}`;
+                    console.log(`Fetching URL: ${proxyUrl}`); // Debug log
+
                     fetch(proxyUrl)
                         .then(response => {
                             if (!response.ok) {

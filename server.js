@@ -11,14 +11,14 @@ app.get('/proxy', (req, res) => {
         return res.status(400).send('URL query parameter is required.');
     }
 
-    request({ url: url, method: 'GET' })
-        .on('error', (err) => {
-            res.status(500).send('Error fetching the URL.');
-        })
-        .pipe(res);
+    request({ url: url, method: 'GET' }, (error, response, body) => {
+        if (error) {
+            return res.status(500).send('Error fetching the URL.');
+        }
+        res.send(body);
+    });
 });
 
 app.listen(port, () => {
     console.log(`Proxy server listening at http://localhost:${port}`);
 });
-

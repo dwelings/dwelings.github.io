@@ -1,4 +1,4 @@
-<!-- iteration num 0.9 -->
+<!-- iteration num 1.0 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -47,17 +47,18 @@
         document.getElementById('fetch-button').addEventListener('click', function() {
             let url = document.getElementById('url-input').value;
             if (url) {
-                // Prepend "http://" if the URL does not start with "http://" or "https://"
+                // Prepend "https://" if the URL does not start with "http://" or "https://"
                 if (!/^https?:\/\//i.test(url)) {
                     url = 'https://' + url;
                 } else if (/^http:\/\//i.test(url)) {
                     // If the URL starts with "http://", switch to "https://"
                     url = url.replace(/^http:\/\//i, 'https://');
                 }
-                
-                // Set the iframe source to the entered URL
+
+                // Use the server-side proxy to fetch and display content
+                const proxyUrl = `http://localhost:3000/proxy?url=${encodeURIComponent(url)}`;
                 const iframe = document.getElementById('content-frame');
-                iframe.src = url;
+                iframe.src = proxyUrl;
                 iframe.onload = function() {
                     document.getElementById('response').innerText = ''; // Clear any previous error message
                 };

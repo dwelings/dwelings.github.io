@@ -1,4 +1,4 @@
-<!-- iteration num 1.2 -->
+<!-- iteration num 1.3 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -44,8 +44,17 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('fetch-button').addEventListener('click', () => {
+        // Ensure the DOM is fully loaded before running the script
+        document.addEventListener('DOMContentLoaded', () => {
+            const fetchButton = document.getElementById('fetch-button');
+            const iframe = document.getElementById('content-frame');
+            
+            if (!fetchButton || !iframe) {
+                console.error('Required elements are missing.');
+                return;
+            }
+
+            fetchButton.addEventListener('click', () => {
                 const urlInput = document.getElementById('url-input');
                 const url = urlInput.value.trim();
                 if (url) {
@@ -58,7 +67,6 @@
 
                     // Use the server-side proxy to fetch and display content
                     const proxyUrl = `http://localhost:3000/proxy?url=${encodeURIComponent(fullUrl)}`;
-                    const iframe = document.getElementById('content-frame');
                     iframe.src = proxyUrl;
                     iframe.onload = () => {
                         document.getElementById('response').innerText = ''; // Clear any previous error message

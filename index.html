@@ -1,3 +1,4 @@
+<!-- iteration num 0.2 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -41,10 +42,10 @@
         document.getElementById('fetch-button').addEventListener('click', function() {
             const url = document.getElementById('url-input').value;
             if (url) {
-                fetch(`https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(url)}`)
-                    .then(response => response.text())  // Change to .text() to handle HTML
+                fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`)
+                    .then(response => response.json())
                     .then(data => {
-                        document.getElementById('response').textContent = data;
+                        document.getElementById('response').textContent = data.contents;
                     })
                     .catch(error => {
                         document.getElementById('response').textContent = 'Error: ' + error.message;

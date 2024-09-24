@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Driving Cube with Oval Track</title>
+    <title>3D Driving F1 Car with Oval Track</title>
     <style>
         body { margin: 0; overflow: hidden; }
         canvas { display: block; }
@@ -63,11 +63,37 @@
             scene.add(wallPiece);
         }
 
-        // Create a simplified F1 car
-        const carGeometry = new THREE.BoxGeometry(1.5, 0.5, 0.5);
-        const carMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-        const car = new THREE.Mesh(carGeometry, carMaterial);
-        scene.add(car);
+        // Create an F1 car shape
+        const carGroup = new THREE.Group();
+
+        // Main body
+        const bodyGeometry = new THREE.BoxGeometry(1.5, 0.5, 0.5);
+        const bodyMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+        const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+        carGroup.add(body);
+
+        // Cockpit
+        const cockpitGeometry = new THREE.BoxGeometry(0.5, 0.3, 0.4);
+        const cockpitMaterial = new THREE.MeshBasicMaterial({ color: 0x0000ff });
+        const cockpit = new THREE.Mesh(cockpitGeometry, cockpitMaterial);
+        cockpit.position.set(0, 0.15, 0);
+        carGroup.add(cockpit);
+
+        // Front wing
+        const frontWingGeometry = new THREE.BoxGeometry(1.5, 0.05, 0.2);
+        const frontWingMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+        const frontWing = new THREE.Mesh(frontWingGeometry, frontWingMaterial);
+        frontWing.position.set(0, 0, 0.4);
+        carGroup.add(frontWing);
+
+        // Rear wing
+        const rearWingGeometry = new THREE.BoxGeometry(0.5, 0.05, 0.2);
+        const rearWingMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+        const rearWing = new THREE.Mesh(rearWingGeometry, rearWingMaterial);
+        rearWing.position.set(0, 0.25, -0.4);
+        carGroup.add(rearWing);
+
+        scene.add(carGroup);
 
         // Position the camera
         camera.position.set(0, 2, 10);
@@ -101,21 +127,21 @@
                 speed = Math.max(speed, 0);
             }
             if (keys['a']) {
-                car.rotation.y += 0.05;
+                carGroup.rotation.y += 0.05;
             }
             if (keys['d']) {
-                car.rotation.y -= 0.05;
+                carGroup.rotation.y -= 0.05;
             }
 
             // Update car position based on speed
-            car.position.x += speed * Math.sin(car.rotation.y);
-            car.position.z -= speed * Math.cos(car.rotation.y); // Inverted for correct forward movement
+            carGroup.position.x += speed * Math.sin(carGroup.rotation.y);
+            carGroup.position.z -= speed * Math.cos(carGroup.rotation.y); // Inverted for correct forward movement
 
             // Camera follows the car
-            camera.position.x = car.position.x;
-            camera.position.z = car.position.z + 10; // Keep the camera behind the car
+            camera.position.x = carGroup.position.x;
+            camera.position.z = carGroup.position.z + 10; // Keep the camera behind the car
             camera.position.y = 2; // Keep the camera above the car
-            camera.lookAt(car.position); // Make the camera look at the car
+            camera.lookAt(carGroup.position); // Make the camera look at the car
 
             // Render the scene
             renderer.render(scene, camera);

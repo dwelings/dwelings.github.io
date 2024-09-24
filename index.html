@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Driving Cube</title>
+    <title>3D Driving Cube with Track</title>
     <style>
         body { margin: 0; overflow: hidden; }
         canvas { display: block; }
@@ -20,14 +20,36 @@
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
 
-        // Create a cube
-        const geometry = new THREE.BoxGeometry(1, 1, 1);
-        const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-        const cube = new THREE.Mesh(geometry, material);
-        scene.add(cube);
+        // Create a simple road track using cubes
+        const roadGeometry = new THREE.BoxGeometry(1, 0.1, 10);
+        const roadMaterial = new THREE.MeshBasicMaterial({ color: 0x888888 });
+
+        // Create road sections
+        const roadSections = [
+            { position: { x: 0, y: -0.05, z: -20 }, rotation: 0 },
+            { position: { x: 0, y: -0.05, z: -10 }, rotation: 0 },
+            { position: { x: 0, y: -0.05, z: 0 }, rotation: 0 },
+            { position: { x: 0, y: -0.05, z: 10 }, rotation: 0 },
+            { position: { x: 0, y: -0.05, z: 20 }, rotation: 0 },
+            { position: { x: 2, y: -0.05, z: 10 }, rotation: Math.PI / 4 },
+            { position: { x: -2, y: -0.05, z: 10 }, rotation: -Math.PI / 4 },
+        ];
+
+        roadSections.forEach(section => {
+            const roadPiece = new THREE.Mesh(roadGeometry, roadMaterial);
+            roadPiece.position.set(section.position.x, section.position.y, section.position.z);
+            roadPiece.rotation.y = section.rotation;
+            scene.add(roadPiece);
+        });
+
+        // Create a cube (the car)
+        const carGeometry = new THREE.BoxGeometry(1, 0.5, 0.5);
+        const carMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+        const car = new THREE.Mesh(carGeometry, carMaterial);
+        scene.add(car);
 
         // Position the camera
-        camera.position.z = 5;
+        camera.position.set(0, 2, 5);
 
         // Movement variables
         const speed = 0.1;
@@ -45,11 +67,20 @@
         const animate = function () {
             requestAnimationFrame(animate);
             
-            // Move the cube based on key presses
-            if (keys['w']) cube.position.z -= speed;
-            if (keys['s']) cube.position.z += speed;
-            if (keys['a']) cube.position.x -= speed;
-            if (keys['d']) cube.position.x += speed;
+            // Move the car based on key presses
+            if (keys['w']) car.position.z -= speed;
+            if (keys['s']) car.position.z += speed;
+            if (keys['a']) car.position.x -= speed;
+            if (keys['d']) car.position.x += speed;
+
+            // Update camera position to follow the car
+            camera.position.x = car.position.x;
+            camera.position.z = car.position.z + 5; // Keep the camera behind the car
+            camera.position.y = 2; // Keep the camera above the car
+            camera.lookAt(car.position); // Make the camera look at the car
+
+            // Set background color (sky blue)
+            scene.background = new THREE.Color(0x87CEEB);
 
             renderer.render(scene, camera);
         };

@@ -20,19 +20,23 @@
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
 
-        // Create a simple road track using cubes
-        const roadGeometry = new THREE.BoxGeometry(1, 0.1, 10);
+        // Create a road track using cubes
+        const roadGeometry = new THREE.BoxGeometry(2, 0.1, 10);
         const roadMaterial = new THREE.MeshBasicMaterial({ color: 0x888888 });
 
-        // Create road sections
+        // Create road sections (Straight, turns)
         const roadSections = [
+            { position: { x: 0, y: -0.05, z: -40 }, rotation: 0 },
+            { position: { x: 0, y: -0.05, z: -30 }, rotation: 0 },
             { position: { x: 0, y: -0.05, z: -20 }, rotation: 0 },
             { position: { x: 0, y: -0.05, z: -10 }, rotation: 0 },
             { position: { x: 0, y: -0.05, z: 0 }, rotation: 0 },
             { position: { x: 0, y: -0.05, z: 10 }, rotation: 0 },
-            { position: { x: 0, y: -0.05, z: 20 }, rotation: 0 },
-            { position: { x: 2, y: -0.05, z: 10 }, rotation: Math.PI / 4 },
-            { position: { x: -2, y: -0.05, z: 10 }, rotation: -Math.PI / 4 },
+            { position: { x: 5, y: -0.05, z: 10 }, rotation: Math.PI / 2 },
+            { position: { x: 5, y: -0.05, z: 20 }, rotation: Math.PI / 2 },
+            { position: { x: 0, y: -0.05, z: 20 }, rotation: Math.PI / 2 },
+            { position: { x: -5, y: -0.05, z: 20 }, rotation: Math.PI / 2 },
+            { position: { x: -5, y: -0.05, z: 10 }, rotation: Math.PI / 2 },
         ];
 
         roadSections.forEach(section => {
@@ -40,6 +44,32 @@
             roadPiece.position.set(section.position.x, section.position.y, section.position.z);
             roadPiece.rotation.y = section.rotation;
             scene.add(roadPiece);
+        });
+
+        // Create walls to prevent the cube from leaving the track
+        const wallGeometry = new THREE.BoxGeometry(0.1, 1, 10);
+        const wallMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+
+        const walls = [
+            { position: { x: 1.1, y: 0.5, z: -40 }, rotation: 0 },
+            { position: { x: 1.1, y: 0.5, z: -20 }, rotation: 0 },
+            { position: { x: 1.1, y: 0.5, z: 0 }, rotation: 0 },
+            { position: { x: 1.1, y: 0.5, z: 10 }, rotation: 0 },
+            { position: { x: -1.1, y: 0.5, z: -40 }, rotation: 0 },
+            { position: { x: -1.1, y: 0.5, z: -20 }, rotation: 0 },
+            { position: { x: -1.1, y: 0.5, z: 0 }, rotation: 0 },
+            { position: { x: -1.1, y: 0.5, z: 10 }, rotation: 0 },
+            { position: { x: 5.1, y: 0.5, z: 10 }, rotation: Math.PI / 2 },
+            { position: { x: 5.1, y: 0.5, z: 20 }, rotation: Math.PI / 2 },
+            { position: { x: -5.1, y: 0.5, z: 10 }, rotation: Math.PI / 2 },
+            { position: { x: -5.1, y: 0.5, z: 20 }, rotation: Math.PI / 2 },
+        ];
+
+        walls.forEach(wall => {
+            const wallPiece = new THREE.Mesh(wallGeometry, wallMaterial);
+            wallPiece.position.set(wall.position.x, wall.position.y, wall.position.z);
+            wallPiece.rotation.y = wall.rotation;
+            scene.add(wallPiece);
         });
 
         // Create a cube (the car)
@@ -73,7 +103,7 @@
             if (keys['a']) car.position.x -= speed;
             if (keys['d']) car.position.x += speed;
 
-            // Update camera position to follow the car
+            // Camera follows the car
             camera.position.x = car.position.x;
             camera.position.z = car.position.z + 5; // Keep the camera behind the car
             camera.position.y = 2; // Keep the camera above the car
@@ -81,6 +111,22 @@
 
             // Set background color (sky blue)
             scene.background = new THREE.Color(0x87CEEB);
+
+            // Collision detection with walls
+            walls.forEach(wall => {
+                if (
+                    car.position.x > wall.position.x - 0.1 &&
+                    car.position.x < wall.position.x + 0.1 &&
+                    car.position.z > wall.position.z - 5 &&
+                    car.position.z < wall.position.z + 5
+                ) {
+                    // Prevent moving through walls
+                    if (keys['w']) car.position.z += speed; // Reverse
+                    if (keys['s']) car.position.z -= speed; // Reverse
+                    if (keys['a']) car.position.x += speed; // Reverse
+                    if (keys['d']) car.position.x -= speed; // Reverse
+                }
+            });
 
             renderer.render(scene, camera);
         };
@@ -96,3 +142,4 @@
     </script>
 </body>
 </html>
+

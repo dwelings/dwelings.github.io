@@ -1,1 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Driving Cube</title>
+    <style>
+        body { margin: 0; overflow: hidden; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // Set up the scene
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer();
+        
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
 
+        // Create a cube
+        const geometry = new THREE.BoxGeometry(1, 1, 1);
+        const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+        const cube = new THREE.Mesh(geometry, material);
+        scene.add(cube);
+
+        // Position the camera
+        camera.position.z = 5;
+
+        // Movement variables
+        const speed = 0.1;
+        const keys = {};
+
+        window.addEventListener('keydown', (event) => {
+            keys[event.key] = true;
+        });
+
+        window.addEventListener('keyup', (event) => {
+            keys[event.key] = false;
+        });
+
+        // Animation loop
+        const animate = function () {
+            requestAnimationFrame(animate);
+            
+            // Move the cube based on key presses
+            if (keys['w']) cube.position.z -= speed;
+            if (keys['s']) cube.position.z += speed;
+            if (keys['a']) cube.position.x -= speed;
+            if (keys['d']) cube.position.x += speed;
+
+            renderer.render(scene, camera);
+        };
+
+        animate();
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>

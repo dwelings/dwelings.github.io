@@ -8,6 +8,93 @@
     <style> body { margin: 0; } canvas { display: block; } </style>
 </head>
 <body>
-    <script src="main.js"></script>
+    <script>
+        let scene, camera, renderer, car;
+        let speed = 0;
+        const maxSpeed = 0.1;
+        const acceleration = 0.002;
+        const turningSpeed = 0.05;
+
+        init();
+        animate();
+
+        function init() {
+            // Set up the scene, camera, and renderer
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+
+            // Create a simple car (a cube)
+            const geometry = new THREE.BoxGeometry(1, 0.5, 2);
+            const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+            car = new THREE.Mesh(geometry, material);
+            scene.add(car);
+
+            // Set up the camera position
+            camera.position.set(0, 1, 5);
+            camera.lookAt(car.position);
+
+            // Add event listeners for key controls
+            window.addEventListener('keydown', onKeyDown);
+            window.addEventListener('keyup', onKeyUp);
+
+            // Add a ground plane
+            const groundGeometry = new THREE.PlaneGeometry(100, 100);
+            const groundMaterial = new THREE.MeshBasicMaterial({ color: 0x888888, side: THREE.DoubleSide });
+            const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+            ground.rotation.x = -Math.PI / 2; // Rotate to make it horizontal
+            scene.add(ground);
+
+            // Set background color
+            scene.background = new THREE.Color(0x87CEEB); // Light blue sky color
+        }
+
+        function onKeyDown(event) {
+            switch (event.key) {
+                case 'w':
+                    speed = Math.min(speed + acceleration, maxSpeed); // Accelerate forward
+                    break;
+                case 'a':
+                    car.rotation.y += turningSpeed; // Turn left
+                    break;
+                case 'd':
+                    car.rotation.y -= turningSpeed; // Turn right
+                    break;
+                case 's':
+                    speed = Math.max(speed - acceleration, 0); // Decelerate
+                    break;
+            }
+        }
+
+        function onKeyUp(event) {
+            if (event.key === 's') {
+                speed = Math.max(speed - acceleration, 0); // Stop when S is released
+            }
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            // Move the car forward based on speed and direction
+            car.position.x += Math.sin(car.rotation.y) * speed;
+            car.position.z += Math.cos(car.rotation.y) * speed;
+
+            // Optional: Gradually reduce speed for smoother stopping
+            if (speed > 0) {
+                speed -= 0.001; // Drag effect
+                if (speed < 0) speed = 0; // Prevent negative speed
+            }
+
+            // Update camera position to follow the car
+            camera.position.x = car.position.x;
+            camera.position.z = car.position.z + 5; // Follow the car
+            camera.position.y = 2; // Keep the camera elevated
+            camera.lookAt(car.position);
+
+            renderer.render(scene, camera);
+        }
+    </script>
 </body>
 </html>

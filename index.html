@@ -20,6 +20,16 @@
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
 
+        // Set background color (sky blue)
+        scene.background = new THREE.Color(0x87CEEB);
+
+        // Create grass ground
+        const grassGeometry = new THREE.PlaneGeometry(100, 100);
+        const grassMaterial = new THREE.MeshBasicMaterial({ color: 0x228B22, side: THREE.DoubleSide });
+        const grass = new THREE.Mesh(grassGeometry, grassMaterial);
+        grass.rotation.x = -Math.PI / 2; // Rotate to lay flat
+        scene.add(grass);
+
         // Create a seamless oval track
         const roadGeometry = new THREE.BoxGeometry(2, 0.1, 10);
         const roadMaterial = new THREE.MeshBasicMaterial({ color: 0x888888 });
@@ -33,7 +43,7 @@
             const z = trackRadius * Math.sin(angle);
 
             const roadPiece = new THREE.Mesh(roadGeometry, roadMaterial);
-            roadPiece.position.set(x, -0.05, z);
+            roadPiece.position.set(x, 0.05, z);
             roadPiece.rotation.y = angle + Math.PI / 2; // Rotate to align with the circle
             scene.add(roadPiece);
         }
@@ -60,7 +70,7 @@
         scene.add(car);
 
         // Position the camera
-        camera.position.set(0, 2, 5);
+        camera.position.set(0, 2, 10);
 
         // Movement variables
         let speed = 0;
@@ -101,28 +111,13 @@
             car.position.x += speed * Math.sin(car.rotation.y);
             car.position.z -= speed * Math.cos(car.rotation.y); // Inverted for correct forward movement
 
-            // Collision detection with walls
-            walls.forEach(wall => {
-                if (
-                    car.position.x > wall.position.x - 0.1 &&
-                    car.position.x < wall.position.x + 0.1 &&
-                    car.position.z > wall.position.z - 5 &&
-                    car.position.z < wall.position.z + 5
-                ) {
-                    // Prevent moving through walls
-                    if (keys['w']) car.position.z += speed; // Reverse
-                    if (keys['s']) car.position.z -= speed; // Reverse
-                    if (keys['a']) car.position.x += speed; // Reverse
-                    if (keys['d']) car.position.x -= speed; // Reverse
-                }
-            });
-
             // Camera follows the car
             camera.position.x = car.position.x;
-            camera.position.z = car.position.z + 5; // Keep the camera behind the car
+            camera.position.z = car.position.z + 10; // Keep the camera behind the car
             camera.position.y = 2; // Keep the camera above the car
             camera.lookAt(car.position); // Make the camera look at the car
 
+            // Render the scene
             renderer.render(scene, camera);
         };
 

@@ -20,51 +20,38 @@
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
 
-        // Create a road track (oval shape)
+        // Create a seamless oval track
         const roadGeometry = new THREE.BoxGeometry(2, 0.1, 10);
         const roadMaterial = new THREE.MeshBasicMaterial({ color: 0x888888 });
 
-        // Oval track positions
-        const trackPositions = [
-            { position: { x: 5, y: -0.05, z: 0 }, rotation: 0 },
-            { position: { x: 4, y: -0.05, z: 2 }, rotation: Math.PI / 4 },
-            { position: { x: 0, y: -0.05, z: 5 }, rotation: Math.PI / 2 },
-            { position: { x: -4, y: -0.05, z: 2 }, rotation: (3 * Math.PI) / 4 },
-            { position: { x: -5, y: -0.05, z: 0 }, rotation: Math.PI },
-            { position: { x: -4, y: -0.05, z: -2 }, rotation: (5 * Math.PI) / 4 },
-            { position: { x: 0, y: -0.05, z: -5 }, rotation: (3 * Math.PI) / 2 },
-            { position: { x: 4, y: -0.05, z: -2 }, rotation: (7 * Math.PI) / 4 },
-            { position: { x: 5, y: -0.05, z: 0 }, rotation: 0 } // Closing the loop
-        ];
+        const trackRadius = 5;
+        const trackSegments = 50;
 
-        trackPositions.forEach(section => {
+        for (let i = 0; i < trackSegments; i++) {
+            const angle = (i / trackSegments) * Math.PI * 2;
+            const x = trackRadius * Math.cos(angle);
+            const z = trackRadius * Math.sin(angle);
+
             const roadPiece = new THREE.Mesh(roadGeometry, roadMaterial);
-            roadPiece.position.set(section.position.x, section.position.y, section.position.z);
-            roadPiece.rotation.y = section.rotation;
+            roadPiece.position.set(x, -0.05, z);
+            roadPiece.rotation.y = angle + Math.PI / 2; // Rotate to align with the circle
             scene.add(roadPiece);
-        });
+        }
 
         // Create walls to prevent the cube from leaving the track
         const wallGeometry = new THREE.BoxGeometry(0.1, 1, 10);
         const wallMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
 
-        const walls = [
-            { position: { x: 5.1, y: 0.5, z: 0 }, rotation: 0 },
-            { position: { x: 4.1, y: 0.5, z: 2 }, rotation: Math.PI / 4 },
-            { position: { x: 0, y: 0.5, z: 5.1 }, rotation: Math.PI / 2 },
-            { position: { x: -4.1, y: 0.5, z: 2 }, rotation: (3 * Math.PI) / 4 },
-            { position: { x: -5.1, y: 0.5, z: 0 }, rotation: Math.PI },
-            { position: { x: -4.1, y: 0.5, z: -2 }, rotation: (5 * Math.PI) / 4 },
-            { position: { x: 0, y: 0.5, z: -5.1 }, rotation: (3 * Math.PI) / 2 },
-            { position: { x: 4.1, y: 0.5, z: -2 }, rotation: (7 * Math.PI) / 4 },
-        ];
+        for (let i = 0; i < trackSegments; i++) {
+            const angle = (i / trackSegments) * Math.PI * 2;
+            const x = (trackRadius + 0.1) * Math.cos(angle);
+            const z = (trackRadius + 0.1) * Math.sin(angle);
 
-        walls.forEach(wall => {
             const wallPiece = new THREE.Mesh(wallGeometry, wallMaterial);
-            wallPiece.position.set(wall.position.x, wall.position.y, wall.position.z);
-            wallPiece.rotation.y = wall.rotation;
+            wallPiece.position.set(x, 0.5, z);
+            wallPiece.rotation.y = angle + Math.PI / 2; // Rotate to align with the circle
             scene.add(wallPiece);
-        });
+        }
 
         // Create a simplified F1 car
         const carGeometry = new THREE.BoxGeometry(1.5, 0.5, 0.5);
@@ -80,7 +67,6 @@
         const MAX_SPEED = 0.5;
         const ACCELERATION = 0.01;
         const BRAKE_DECELERATION = 0.02;
-        const friction = 0.98;
         const keys = {};
 
         window.addEventListener('keydown', (event) => {
@@ -111,15 +97,9 @@
                 car.rotation.y -= 0.05;
             }
 
-            // Update car position
+            // Update car position based on speed
             car.position.x += speed * Math.sin(car.rotation.y);
             car.position.z -= speed * Math.cos(car.rotation.y); // Inverted for correct forward movement
-
-            // Camera follows the car
-            camera.position.x = car.position.x;
-            camera.position.z = car.position.z + 5; // Keep the camera behind the car
-            camera.position.y = 2; // Keep the camera above the car
-            camera.lookAt(car.position); // Make the camera look at the car
 
             // Collision detection with walls
             walls.forEach(wall => {
@@ -136,6 +116,12 @@
                     if (keys['d']) car.position.x -= speed; // Reverse
                 }
             });
+
+            // Camera follows the car
+            camera.position.x = car.position.x;
+            camera.position.z = car.position.z + 5; // Keep the camera behind the car
+            camera.position.y = 2; // Keep the camera above the car
+            camera.lookAt(car.position); // Make the camera look at the car
 
             renderer.render(scene, camera);
         };

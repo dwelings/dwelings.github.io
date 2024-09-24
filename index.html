@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Driving Cube with Track</title>
+    <title>3D Driving Cube with Oval Track</title>
     <style>
         body { margin: 0; overflow: hidden; }
         canvas { display: block; }
@@ -20,26 +20,24 @@
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
 
-        // Create a road track using cubes
+        // Create a road track (oval shape)
         const roadGeometry = new THREE.BoxGeometry(2, 0.1, 10);
         const roadMaterial = new THREE.MeshBasicMaterial({ color: 0x888888 });
 
-        // Create road sections (Straight, turns)
-        const roadSections = [
-            { position: { x: 0, y: -0.05, z: -40 }, rotation: 0 },
-            { position: { x: 0, y: -0.05, z: -30 }, rotation: 0 },
-            { position: { x: 0, y: -0.05, z: -20 }, rotation: 0 },
-            { position: { x: 0, y: -0.05, z: -10 }, rotation: 0 },
-            { position: { x: 0, y: -0.05, z: 0 }, rotation: 0 },
-            { position: { x: 0, y: -0.05, z: 10 }, rotation: 0 },
-            { position: { x: 5, y: -0.05, z: 10 }, rotation: Math.PI / 2 },
-            { position: { x: 5, y: -0.05, z: 20 }, rotation: Math.PI / 2 },
-            { position: { x: 0, y: -0.05, z: 20 }, rotation: Math.PI / 2 },
-            { position: { x: -5, y: -0.05, z: 20 }, rotation: Math.PI / 2 },
-            { position: { x: -5, y: -0.05, z: 10 }, rotation: Math.PI / 2 },
+        // Oval track positions
+        const trackPositions = [
+            { position: { x: 5, y: -0.05, z: 0 }, rotation: 0 },
+            { position: { x: 4, y: -0.05, z: 2 }, rotation: Math.PI / 4 },
+            { position: { x: 0, y: -0.05, z: 5 }, rotation: Math.PI / 2 },
+            { position: { x: -4, y: -0.05, z: 2 }, rotation: (3 * Math.PI) / 4 },
+            { position: { x: -5, y: -0.05, z: 0 }, rotation: Math.PI },
+            { position: { x: -4, y: -0.05, z: -2 }, rotation: (5 * Math.PI) / 4 },
+            { position: { x: 0, y: -0.05, z: -5 }, rotation: (3 * Math.PI) / 2 },
+            { position: { x: 4, y: -0.05, z: -2 }, rotation: (7 * Math.PI) / 4 },
+            { position: { x: 5, y: -0.05, z: 0 }, rotation: 0 } // Closing the loop
         ];
 
-        roadSections.forEach(section => {
+        trackPositions.forEach(section => {
             const roadPiece = new THREE.Mesh(roadGeometry, roadMaterial);
             roadPiece.position.set(section.position.x, section.position.y, section.position.z);
             roadPiece.rotation.y = section.rotation;
@@ -51,18 +49,14 @@
         const wallMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
 
         const walls = [
-            { position: { x: 1.1, y: 0.5, z: -40 }, rotation: 0 },
-            { position: { x: 1.1, y: 0.5, z: -20 }, rotation: 0 },
-            { position: { x: 1.1, y: 0.5, z: 0 }, rotation: 0 },
-            { position: { x: 1.1, y: 0.5, z: 10 }, rotation: 0 },
-            { position: { x: -1.1, y: 0.5, z: -40 }, rotation: 0 },
-            { position: { x: -1.1, y: 0.5, z: -20 }, rotation: 0 },
-            { position: { x: -1.1, y: 0.5, z: 0 }, rotation: 0 },
-            { position: { x: -1.1, y: 0.5, z: 10 }, rotation: 0 },
-            { position: { x: 5.1, y: 0.5, z: 10 }, rotation: Math.PI / 2 },
-            { position: { x: 5.1, y: 0.5, z: 20 }, rotation: Math.PI / 2 },
-            { position: { x: -5.1, y: 0.5, z: 10 }, rotation: Math.PI / 2 },
-            { position: { x: -5.1, y: 0.5, z: 20 }, rotation: Math.PI / 2 },
+            { position: { x: 5.1, y: 0.5, z: 0 }, rotation: 0 },
+            { position: { x: 4.1, y: 0.5, z: 2 }, rotation: Math.PI / 4 },
+            { position: { x: 0, y: 0.5, z: 5.1 }, rotation: Math.PI / 2 },
+            { position: { x: -4.1, y: 0.5, z: 2 }, rotation: (3 * Math.PI) / 4 },
+            { position: { x: -5.1, y: 0.5, z: 0 }, rotation: Math.PI },
+            { position: { x: -4.1, y: 0.5, z: -2 }, rotation: (5 * Math.PI) / 4 },
+            { position: { x: 0, y: 0.5, z: -5.1 }, rotation: (3 * Math.PI) / 2 },
+            { position: { x: 4.1, y: 0.5, z: -2 }, rotation: (7 * Math.PI) / 4 },
         ];
 
         walls.forEach(wall => {
@@ -72,8 +66,8 @@
             scene.add(wallPiece);
         });
 
-        // Create a cube (the car)
-        const carGeometry = new THREE.BoxGeometry(1, 0.5, 0.5);
+        // Create a simplified F1 car
+        const carGeometry = new THREE.BoxGeometry(1.5, 0.5, 0.5);
         const carMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
         const car = new THREE.Mesh(carGeometry, carMaterial);
         scene.add(car);
@@ -82,7 +76,11 @@
         camera.position.set(0, 2, 5);
 
         // Movement variables
-        const speed = 0.1;
+        let speed = 0;
+        const MAX_SPEED = 0.5;
+        const ACCELERATION = 0.01;
+        const BRAKE_DECELERATION = 0.02;
+        const friction = 0.98;
         const keys = {};
 
         window.addEventListener('keydown', (event) => {
@@ -98,19 +96,30 @@
             requestAnimationFrame(animate);
             
             // Move the car based on key presses
-            if (keys['w']) car.position.z -= speed;
-            if (keys['s']) car.position.z += speed;
-            if (keys['a']) car.position.x -= speed;
-            if (keys['d']) car.position.x += speed;
+            if (keys['w']) {
+                speed += ACCELERATION;
+                speed = Math.min(speed, MAX_SPEED);
+            }
+            if (keys['s']) {
+                speed -= BRAKE_DECELERATION;
+                speed = Math.max(speed, 0);
+            }
+            if (keys['a']) {
+                car.rotation.y += 0.05;
+            }
+            if (keys['d']) {
+                car.rotation.y -= 0.05;
+            }
+
+            // Update car position
+            car.position.x += speed * Math.sin(car.rotation.y);
+            car.position.z -= speed * Math.cos(car.rotation.y); // Inverted for correct forward movement
 
             // Camera follows the car
             camera.position.x = car.position.x;
             camera.position.z = car.position.z + 5; // Keep the camera behind the car
             camera.position.y = 2; // Keep the camera above the car
             camera.lookAt(car.position); // Make the camera look at the car
-
-            // Set background color (sky blue)
-            scene.background = new THREE.Color(0x87CEEB);
 
             // Collision detection with walls
             walls.forEach(wall => {
@@ -142,4 +151,3 @@
     </script>
 </body>
 </html>
-

@@ -63,20 +63,31 @@
             scene.add(wallPiece);
         }
 
-        // Create an F1 car shape
+        // Create a more detailed F1 car shape
         const carGroup = new THREE.Group();
 
         // Main body
-        const bodyGeometry = new THREE.BoxGeometry(1.5, 0.5, 0.5);
+        const bodyGeometry = new THREE.BoxGeometry(1.5, 0.4, 0.5);
         const bodyMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
         const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
         carGroup.add(body);
 
+        // Side pods
+        const sidePodGeometry = new THREE.BoxGeometry(0.3, 0.2, 0.5);
+        const sidePodMaterial = new THREE.MeshBasicMaterial({ color: 0x222222 });
+        const leftPod = new THREE.Mesh(sidePodGeometry, sidePodMaterial);
+        leftPod.position.set(-0.8, 0.1, 0);
+        carGroup.add(leftPod);
+        
+        const rightPod = leftPod.clone();
+        rightPod.position.x = 0.8;
+        carGroup.add(rightPod);
+
         // Cockpit
-        const cockpitGeometry = new THREE.BoxGeometry(0.5, 0.3, 0.4);
+        const cockpitGeometry = new THREE.BoxGeometry(0.5, 0.2, 0.4);
         const cockpitMaterial = new THREE.MeshBasicMaterial({ color: 0x0000ff });
         const cockpit = new THREE.Mesh(cockpitGeometry, cockpitMaterial);
-        cockpit.position.set(0, 0.15, 0);
+        cockpit.position.set(0, 0.2, 0);
         carGroup.add(cockpit);
 
         // Front wing
@@ -92,6 +103,24 @@
         const rearWing = new THREE.Mesh(rearWingGeometry, rearWingMaterial);
         rearWing.position.set(0, 0.25, -0.4);
         carGroup.add(rearWing);
+
+        // Wheels
+        const wheelGeometry = new THREE.CylinderGeometry(0.15, 0.15, 0.4, 10);
+        const wheelMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });
+
+        const wheelPositions = [
+            { x: -0.75, y: -0.25, z: 0.25 },
+            { x: 0.75, y: -0.25, z: 0.25 },
+            { x: -0.75, y: -0.25, z: -0.25 },
+            { x: 0.75, y: -0.25, z: -0.25 },
+        ];
+
+        wheelPositions.forEach(pos => {
+            const wheel = new THREE.Mesh(wheelGeometry, wheelMaterial);
+            wheel.rotation.z = Math.PI / 2; // Rotate to make it horizontal
+            wheel.position.set(pos.x, pos.y, pos.z);
+            carGroup.add(wheel);
+        });
 
         scene.add(carGroup);
 
